@@ -1,0 +1,14 @@
+## assign("x",df)
+
+# test_1 ~ test_5 의 객체 생성
+# 각 1 ~ 5 의 값을 준다.
+
+for(i in 1:5) {
+  assign(paste0("test_",i),i) 
+}
+
+
+# 반복문을 통한 객체 생성에 대해 하나의 리스트로 묶기
+test_list <- mget(ls(pattern = "test_"))
+
+
