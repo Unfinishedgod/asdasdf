@@ -1,0 +1,12 @@
+# R 3.6 버전에서 devtools 패키지 설치시 경로문제가 발생할 경우 다음의 코드를 사용해준다.
+
+Sys.setenv(R_INSTALL_STAGED = FALSE)
+
+# 이후에 설치 하면 됨
+
+install.packages("devtools")
+library(devtools)
+
+
+
+
