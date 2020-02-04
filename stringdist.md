@@ -13,7 +13,7 @@
 
 `stringsim("ca", "abc")`
 
-### 이때 옵션을 넣어 주어야함
+### 순서 상관없이 단어 자체만 보기 위해선 옵션을 넣어 주어야함 (jaccard)
 
 ```
 rmethods = c("osa", "lv", "dl", "hamming", "lcs", "qgram",
