@@ -4,7 +4,7 @@
 
 # install.packages("rJava")
 library(rJava)
-
+ 
 
 # 의존성 패키지 설치
 install.packages(c('stringr', 'hash', 'tau', 'Sejong', 'RSQLite', 'devtools'), type = "binary")

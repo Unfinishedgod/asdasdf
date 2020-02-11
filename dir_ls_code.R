@@ -1,7 +1,7 @@
 # 경로 확인 코드 등등
 dir_ls
 
-dir_info(getwd())
+dir_info(getwd()) 
 
 dir_ls(getwd())
 
