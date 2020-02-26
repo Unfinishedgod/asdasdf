@@ -2,7 +2,6 @@ library(tidyverse)
 library(tidytext)
 library(arules)
 library(KoNLP)
-
 text <- c("Because I could not stop for Death -",
           "He kindly stopped for me -",
           "The Carriage held but just Ourselves -",
@@ -41,9 +40,9 @@ a <- text_df %>%
 
 a
 
+str(nouns)
 
-
-buyItems <- as(asdf_2, "transactions")
+buyItems <- as(nouns, "transactions")
 
 # 변환된 트랜잭션 확인(11개 항목에 대해 5개 거래 존재)
 buyItems
