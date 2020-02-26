@@ -25,3 +25,16 @@ github 버전 설치
 ```remotes::install_github('haven-jeon/KoNLP')```
 
 ```library(KoNLP)```
+
+
+
+
+2020 02 26 기준
+
+### 의존성 패키지 설치
+```nstall.packages(c('stringr', 'hash', 'tau', 'Sejong', 'RSQLite', 'devtools'), type = "binary")```
+
+### github 버전 설치
+```install.packages("remotes")```
+### 64bit 에서만 동작합니다.
+```remotes::install_github('haven-jeon/KoNLP', upgrade = "never", INSTALL_opts=c("--no-multiarch"))```
