@@ -1,13 +1,30 @@
-library(wordcloud2)
+---
+title: "원전&안전에 대한 연관검색 보고서"
+author: "최은화"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+```{r message=FALSE}
+library(wordcloud)
 library(KoNLP)
 library(rvest)
 library(tidyverse)
 library(arules)
 library(glue)
 library(arulesViz)
+library(plotly)
+library(RColorBrewer)
+```
 
-keyword <- "공팔리터"
-page_num <- seq(1,100,10)
+
+```{r results='hide'}
+keyword <- "코로나 "
+page_num <- seq(1,20,10)
 
 news_url_list <- map(page_num, function(x) {
   news_url <- glue("https://search.naver.com/search.naver?&where=news&query={keyword}&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=22&start={x}&refresh_start=0")
@@ -20,7 +37,7 @@ news_url_list <- map(page_num, function(x) {
     html_attr("href")
   
   news_urls[news_urls %>% str_detect("https://news.naver")]
-}) %>% 
+  }) %>% 
   unlist() %>% 
   unique()
 
@@ -54,7 +71,7 @@ nouns <- map(cleanging_text, function(x) {
     str_remove_all("가") %>%
     str_remove_all("을") %>%
     str_remove_all("를") %>% 
-    str_remove_all("일보")
+    str_remove_all("일보") 
   
   cleanging_data %>% 
     subset(nchar(cleanging_data) >= 2)
@@ -84,10 +101,10 @@ test_df <- word.freq %>%
 # 상위 10개 데이터 사용
 
 item_list <- map(1:length(nouns), function(x) {
-  nouns[[x]] %>% 
+    nouns[[x]] %>% 
     subset(nouns[[x]] %in% test_df) %>% 
     unique() %>% 
-    head(10)
+    head(20)
 })
 
 
@@ -98,30 +115,63 @@ items <- as(item_list, "transactions")
 
 result_items <- apriori(items, parameter = list(support=0.2, confidence=0.8))
 
-inspect(result_items)
+result_items_df <- inspect(result_items)
+```
 
-# str(result_items)
+### 단어사이의 상관성
 
-as(head(sort(result_items, by = c("lift")), n=20), "data.frame")
+```{r}
+colnames(result_items_df)[2] <- "="
+
+result_items_df %>% 
+  head(30)
+```
+
 
 ### 시각화
+
+```{r fig.height=8, fig.width=10}
 set.seed(200)
-plot(result_items[1:50], method = "graph")
+plot(result_items, method = "graph")
+```
 
 
-wordcloud2(word.freq,
-           fontFamily="Malgun Gothic",
-           size = 0.5,
-           minRotation=0,
-           maxRotation=0,
-)
+```{r }
+# wordcloud2(word.freq,
+#            fontFamily="Malgun Gothic",
+#            size = 0.5,
+#            minRotation=0,
+#            maxRotation=0,
+# )
+```
+
+### 워드 클라우드
+
+```{r}
+set.seed(2)
+wordcloud::wordcloud(words = word.freq$word, freq = word.freq$freq,
+                     min.freq = 3, max.words = 200,
+                     random.order = FALSE, rot.per = 0.1,
+                     scale= c(3,0.5),
+                     colors = brewer.pal(8, "Dark2")
+                     )
+```
 
 
-ggplot(head(word.freq,30), aes(x=reorder(word,freq),y=freq,fill=word),colour=gradient) +
+### 단어 빈도 그래프
+
+```{r fig.height=6, fig.width=10}
+ggplot(data = head(word.freq, 10), 
+       aes(x = reorder(word, freq),
+           y = freq,
+           fill = as.factor(freq))) +
   geom_col() +
-  theme_bw() + 
-  labs(x="",y="단어 빈도",title = "데이터 3법 네이버 뉴스 단어 빈도") + 
+  geom_text(aes(label = freq), vjust = 0.5, hjust = 3, color = "black", size = 4) +
+  scale_fill_brewer(palette = "Blues") +
   coord_flip() + 
-  theme(legend.position = "none") +
-  theme(text = element_text(size=20),
-        axis.text.x = element_text(angle=90, hjust=1)) 
+  theme_bw() + 
+  theme(legend.position = "none",
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+```
+

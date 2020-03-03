@@ -1,0 +1,61 @@
+---
+title: "Untitled"
+author: "최의용"
+date: '2020 3 3 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(stringi)
+library(kormaps2014)
+library(tidyverse)
+library(googledrive)
+library(mapproj)
+library(ggiraphExtra)
+library(data.table)
+library(readxl)
+
+
+## 전체 인구
+population <- read_xls("population_x.xls")
+
+population <- population[,c(1,8)]
+
+colnames(population) <- c("행정구역별_읍면동", "총인구수")
+
+population <- population[-c(1:2),]
+
+korpop2020 <- korpop1 %>% 
+  left_join(population) %>% 
+  rename(pop2020 = 총인구수)
+
+korpop2020$pop2020 <- as.numeric(korpop2020$pop2020)
+
+ggChoropleth(data = korpop2020,      # 지도에 표현할 데이터
+             aes(fill = pop2020,      # 색깔로 표현할 변수
+                 map_id = code,   # 지역 기준 변수
+                 tooltip = name), # 지도 위에 표시할 지역명
+             map = kormap1,       # 지도 데이터
+             interactive = T)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

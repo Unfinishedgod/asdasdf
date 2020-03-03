@@ -1,6 +1,6 @@
 ---
-title: "Online Text Mining"
-author: "최의용"
+title: "원전&안전에 대한 연관검색 보고서"
+author: "최은화"
 date: "`r Sys.Date()`"
 output: 
    prettydoc::html_pretty:
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message=FALSE}
-library(wordcloud2)
+library(wordcloud)
 library(KoNLP)
 library(rvest)
 library(tidyverse)
@@ -21,12 +21,13 @@ library(arules)
 library(glue)
 library(arulesViz)
 library(plotly)
+library(RColorBrewer)
 ```
 
 
 ```{r}
-keyword <- "코로나"
-page_num <- seq(1,100,10)
+keyword <- "원전안전"
+page_num <- seq(1,21,10)
 
 news_url_list <- map(page_num, function(x) {
   news_url <- glue("https://search.naver.com/search.naver?&where=news&query={keyword}&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=22&start={x}&refresh_start=0")
@@ -88,7 +89,7 @@ df.word <- rename(df.word, word = Var1, freq = Freq)
 
 word.freq  <- df.word %>% 
   filter(nchar(word) >=2 & freq >= 2) %>% 
-  arrange(desc(freq)) 
+  arrange(desc(freq))
 
 # 상위 5개 데이터 파악
 test_df <- word.freq %>% 
@@ -113,11 +114,12 @@ item_list <- map(1:length(nouns), function(x) {
 
 items <- as(item_list, "transactions")
 
-inspect(items)
+# inspect(items)
 
 result_items <- apriori(items, parameter = list(support=0.1, confidence=0.8))
 
-inspect(result_items[1:80])
+result_items_df <- inspect(result_items[1:80])
+
 ```
 
 
@@ -130,22 +132,36 @@ plot(result_items[1:80], method = "graph")
 
 
 ```{r }
-wordcloud2(word.freq,
-           fontFamily="Malgun Gothic",
-           size = 0.5,
-           minRotation=0,
-           maxRotation=0,
-)
+# wordcloud2(word.freq,
+#            fontFamily="Malgun Gothic",
+#            size = 0.5,
+#            minRotation=0,
+#            maxRotation=0,
+# )
 ```
 
+```{r}
+set.seed(2)
+wordcloud::wordcloud(words = word.freq$word, freq = word.freq$freq,
+                     min.freq = 3, max.words = 200,
+                     random.order = FALSE, rot.per = 0.1,
+                     scale= c(3,0.5),
+                     colors = brewer.pal(8, "Dark2")
+                     )
+```
+
+
+
+
 ```{r fig.height=6, fig.width=10}
-ggplot(head(word.freq,30), aes(x=reorder(word,freq),y=freq,fill=word),colour=gradient) +
+ggplot(head(word.freq,20), aes(x=reorder(word,freq),y=freq,fill=word),colour=gradient) +
   geom_col() +
   theme_bw() + 
   labs(x="",y="단어 빈도",title = paste0(keyword," 네이버 뉴스 단어 빈도")) + 
   coord_flip() + 
   theme(legend.position = "none") +
-  theme(text = element_text(size=20),
+  geom_text(aes(label=freq), vjust=0.5, hjust = 3,color="black", size=4) +
+  theme(text = element_text(size=10),
         axis.text.x = element_text(angle=90, hjust=1)) 
 ```
 
