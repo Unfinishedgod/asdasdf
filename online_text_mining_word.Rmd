@@ -23,8 +23,8 @@ library(RColorBrewer)
 
 
 ```{r results='hide'}
-keyword <- "코로나 "
-page_num <- seq(1,20,10)
+keyword <- "원전안전"
+page_num <- seq(1,100,10)
 
 news_url_list <- map(page_num, function(x) {
   news_url <- glue("https://search.naver.com/search.naver?&where=news&query={keyword}&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=22&start={x}&refresh_start=0")
@@ -161,7 +161,7 @@ wordcloud::wordcloud(words = word.freq$word, freq = word.freq$freq,
 ### 단어 빈도 그래프
 
 ```{r fig.height=6, fig.width=10}
-ggplot(data = head(word.freq, 10), 
+ggplot(data = head(word.freq, 9), 
        aes(x = reorder(word, freq),
            y = freq,
            fill = as.factor(freq))) +
