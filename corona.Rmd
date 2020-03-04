@@ -13,7 +13,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
 ```
 
 
@@ -108,7 +108,7 @@ ggChoropleth(data = kor_pop_corona,      # 지도에 표현할 데이터
 
 [How to plot animated maps with gganimate](https://d4tagirl.com/2017/05/how-to-plot-animated-maps-with-gganimate)
 
-```{r}
+```{r fig.height=9}
 korea <- map_data("world", region = c("South Korea"))
 
 Lat_lon_fun <- function(addr) {
@@ -146,7 +146,8 @@ ggplot() +
   geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill=region)) +
   geom_point(data=corona_0301_bubble, aes(x=long, y=lat, size = pop), shape = 16, color = "green", alpha = 0.4) +
   scale_size_area(max_size=30) +
-  geom_text(data=corona_0301_bubble, aes(x=long+0.2, y=lat+0.2, label=name))
+  geom_text(data=corona_0301_bubble, aes(x=long+0.2, y=lat+0.2, label=name)) +
+  theme(legend.position = "bottom")
 ```
 
 
@@ -154,24 +155,29 @@ ggplot() +
 
 ```{r}
 ### 
-# corona_flow <- read_xlsx("corona19-kr.xlsx")
-# 
-# corona_flow_2 <- corona_flow %>% 
-#   filter(location != "검역" & state1 == "확진") %>%
-#   rename(Day = "datetime(kst)") %>% 
-#   group_by(Day, location, state1) %>% 
-#   summarise(count = sum(count)) 
-# 
-# p <- corona_flow_2 %>% 
-#   ggplot(aes(Day, count, group = location, color = factor(location))) +
-#   geom_line() +
-#   scale_color_viridis_d() +
-#   labs(x = "날짜", y = "확진자 수(26일 이후)") +
-#   theme(legend.position = "top")
-# 
-# 
-# p + geom_point() + 
-#   geom_text( aes(y = count+1,label=paste0(location, " (",count,"명)")), size=3, vjust=-1) +
+corona_flow <- read_xlsx("corona19-kr.xlsx")
+
+corona_flow_2 <- corona_flow %>%
+  filter(location != "검역" & state1 == "확진") %>%
+  rename(Day = "datetime(kst)") %>%
+  group_by(Day, location, state1) %>%
+  summarise(count = sum(count))
+
+corona_flow_2$location <- as.factor(corona_flow_2$location)
+
+p <- corona_flow_2 %>%
+  ggplot(aes(Day, count, group = location, color = factor(location))) +
+  geom_line() +
+  scale_color_viridis_d() +
+  labs(x = "날짜", y = "확진자 수(26일 이후)") +
+  theme(legend.position = "top") +
+  facet_wrap(~ Location)
+
+
+p + geom_point() +
+  geom_text( aes(y = count+1,label=paste0(location, " (",count,"명)")), size=3, vjust=-1) 
+
+# +
 #   transition_reveal(Day)
 ```
 
@@ -181,7 +187,6 @@ ggplot() +
 ```{r}
 kor_pop_corona_2 <- kor_pop_corona %>% 
   gather(key = "case", value = "pops", `pop2020`,`pop_corona`)
-
 
 
 ggplot(data = kor_pop_corona_2) +
