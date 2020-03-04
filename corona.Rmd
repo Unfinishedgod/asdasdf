@@ -170,8 +170,7 @@ p <- corona_flow_2 %>%
   geom_line() +
   scale_color_viridis_d() +
   labs(x = "날짜", y = "확진자 수(26일 이후)") +
-  theme(legend.position = "top") +
-  facet_wrap(~ Location)
+  theme(legend.position = "top")
 
 
 p + geom_point() +
