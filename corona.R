@@ -13,7 +13,7 @@ library(ggthemes)
 library(gganimate)
 library(httr)
 library(jsonlite)
-library(lubridate)
+library(glue)
 
 theme_set(theme_bw())
 
@@ -166,93 +166,22 @@ Lat_lon_fun <- function(addr) {
 
 
 location_list <- corona_0301$name
-location_list <- corona_flow_2$location
 
 location_long_lat <- map_dfr(location_list, function(x) {
   Lat_lon_fun(x)
 })
 
-################################################################################
-corona_flow_3 <- corona_flow_2 %>% 
-  left_join(location_long_lat) %>% 
-  unique() %>% 
-  arrange(Day)
-
-corona_flow_3$long <- corona_flow_3$long %>% 
-  as.numeric()
-
-corona_flow_3$lat <- corona_flow_3$lat %>% 
-  as.numeric()
-
-ghost_points_ini <- tibble(
-  Day = head(corona_flow_3$Day,1),
-  followers = 0, lon = 0, lat = 0)
-
-ghost_points_fin <- tibble(
-  Day = tail(corona_flow_3$Day,1),
-  followers = 0, lon = 0, lat = 0)
-
-################################################################################
-map(database = 'world', region = c('South Korea'))
-
-
-kor_plot <- ggplot() + 
-  geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill="lightgray", colour = "white"))
-
-kor_plot
-
-world <- ggplot() +
-  borders("world", colour = "gray85", fill = "gray80") +
-  theme_map() 
-
-Korea_map_data <- map_data("world", region = "South Korea")
-
-Korea_map <- ggplot(Korea_map_data, aes(x = long, y = lat, group = group)) +
-  geom_polygon(fill="lightgray", colour = "white") +
-  theme_map()
-
-
-
-world <- ggplot() + 
-  geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill=region)) +
-  geom_point(data=asdf, aes(x=long, y=lat, size = pop), shape = 16, color = "green", alpha = 0.4) +
-  scale_size_area(max_size=30) +
-  geom_text(data=asdf, aes(x=long+0.2, y=lat+0.2, label=name))
-
-world <- ggplot() + 
-  geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill=region)) +
-  geom_point(data=corona_flow_3, aes(x=long, y=lat, size = count), shape = 16, color = "green", alpha = 0.4) +
-  scale_size_area(max_size=30) +
-  geom_text(data=corona_flow_3, aes(x=long+0.2, y=lat+0.2, label=location))
-
-
-world +
-  geom_point(aes(x = lon, y = lat, size = followers, 
-                 frame = Day,
-                 cumulative = TRUE),
-             data = corona_flow_3, colour = 'purple', alpha = .5) +
-  geom_point(aes(x = lon, y = lat, size = followers, # this is the init transparent frame
-                 frame = Day,
-                 cumulative = TRUE),
-             data = ghost_points_ini, alpha = 0) +
-  geom_point(aes(x = lon, y = lat, size = followers, # this is the final transparent frames
-                 frame = Day,
-                 cumulative = TRUE),
-             data = ghost_points_fin, alpha = 0) +
-  scale_size_continuous(range = c(1, 8), breaks = c(250, 500, 750, 1000)) +
-  labs(size = 'Followers') 
-
-ani.options(interval = 0.2)
-gganimate(map)
-
-
-##
 asdf <- cbind(corona_0301, location_long_lat[,-1]) %>% 
   rename(pop = `확진환자 (명)`)
 
 asdf$pop <- as.numeric(asdf$pop)
 asdf$long <- as.numeric(asdf$long)
 asdf$lat <- as.numeric(asdf$lat)
+
+# ggplot() + 
+#   geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill=region)) +
+#   geom_point(data=korea.pop, aes(x=long, y=lat, size = pop), shape = 16, color = "green", alpha = 0.4) +
+#   scale_size_area(max_size=10)
 
 
 ggplot() + 
@@ -260,87 +189,37 @@ ggplot() +
   geom_point(data=asdf, aes(x=long, y=lat, size = pop), shape = 16, color = "green", alpha = 0.4) +
   scale_size_area(max_size=30) +
   geom_text(data=asdf, aes(x=long+0.2, y=lat+0.2, label=name))
-##
-
-  ################################################################################
-
-kor_plot <- ggplot() + 
-  geom_polygon(data=korea, aes(x=long, y=lat, group=group, fill=region)) +
-  geom_point(data=asdf, aes(x=long, y=lat, size = pop), shape = 16, color = "green", alpha = 0.4) +
-  scale_size_area(max_size=30) +
-  geom_text(data=asdf, aes(x=long+0.2, y=lat+0.2, label=name))
-
-asdf <- cbind(corona_0301, location_long_lat[,-1]) %>% 
-  rename(pop = `확진환자 (명)`)
-
-asdf$pop <- as.numeric(asdf$pop)
-asdf$long <- as.numeric(asdf$long)
-asdf$lat <- as.numeric(asdf$lat)
-
-map_less_frames <- world +
-  geom_point(aes(x = lon, y = lat, size = est_followers, 
-                 frame = date),
-             data = rladies_less_frames, colour = 'purple', alpha = .5) +
-  geom_point(aes(x = lon, y = lat, size = est_followers, 
-                 frame = date),
-             data = ghost_points_ini, alpha = 0) +
-  geom_point(aes(x = lon, y = lat, size = est_followers, 
-                 frame = date),
-             data = ghost_points_fin, colour = 'purple', alpha = .5) +
-  # scale_size_continuous(range = c(1, 8), breaks = c(250, 500, 750, 1000)) +
-  labs(size = 'Followers')
-
-ani.options(interval = .15)
-gganimate(map_less_frames)
-
-
-# write.csv(location_long_lat,file="location_long_lat.csv")
-world <- ggplot() +
-  borders("world", colour = "gray85", fill = "gray80") +
-  theme_map() 
-
-map <- world +
-  geom_point(aes(x = lon, y = lat, size = followers),
-             data = rladies, 
-             colour = 'purple', alpha = .5) +
-  scale_size_continuous(range = c(1, 8), 
-                        breaks = c(250, 500, 750, 1000)) +
-  labs(size = 'Followers')
 
 
 
-# Some EU Contries
-some.eu.countries <- c(
-  "Portugal", "Spain", "France", "Switzerland", "Germany",
-  "Austria", "Belgium", "UK", "Netherlands",
-  "Denmark", "Poland", "Italy", 
-  "Croatia", "Slovenia", "Hungary", "Slovakia",
-  "Czech republic"
-)
 
-
-world_map <- map_data("world", region = "South Korea")
-
-<- ggplot(world_map, aes(x = long, y = lat, group = group)) +
-  geom_polygon(fill="lightgray", colour = "white") +
-  theme_map()
-
-
-some.eu.countries <- "South Korea"
-# Retrievethe map data
-some.eu.maps <- map_data("world", region = some.eu.countries)
-
-# Compute the centroid as the mean longitude and lattitude
-# Used as label coordinate for country's names
-region.lab.data <- some.eu.maps %>%
-  group_by(region) %>%
-  summarise(long = mean(long), lat = mean(lat))
-
-
-ggplot(some.eu.maps, aes(x = long, y = lat)) +
-  geom_polygon(aes( group = group, fill = region, colors = "White"))+
-  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
-  scale_fill_viridis_d("White")+
-  theme_void()+
-  theme(legend.position = "none")
-
+# 
+# map_less_frames <- world +
+#   geom_point(aes(x = lon, y = lat, size = est_followers, 
+#                  frame = date),
+#              data = rladies_less_frames, colour = 'purple', alpha = .5) +
+#   geom_point(aes(x = lon, y = lat, size = est_followers, 
+#                  frame = date),
+#              data = ghost_points_ini, alpha = 0) +
+#   geom_point(aes(x = lon, y = lat, size = est_followers, 
+#                  frame = date),
+#              data = ghost_points_fin, colour = 'purple', alpha = .5) +
+#   # scale_size_continuous(range = c(1, 8), breaks = c(250, 500, 750, 1000)) +
+#   labs(size = 'Followers')
+# 
+# ani.options(interval = .15)
+# gganimate(map_less_frames)
+# 
+# 
+# # write.csv(location_long_lat,file="location_long_lat.csv")
+# world <- ggplot() +
+#   borders("world", colour = "gray85", fill = "gray80") +
+#   theme_map() 
+# 
+# map <- world +
+#   geom_point(aes(x = lon, y = lat, size = followers),
+#              data = rladies, 
+#              colour = 'purple', alpha = .5) +
+#   scale_size_continuous(range = c(1, 8), 
+#                         breaks = c(250, 500, 750, 1000)) +
+#   labs(size = 'Followers')
