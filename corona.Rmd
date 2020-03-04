@@ -175,10 +175,8 @@ p <- corona_flow_2 %>%
 
 
 p + geom_point() +
-  geom_text( aes(y = count+1,label=paste0(location, " (",count,"명)")), size=3, vjust=-1) 
-
-# +
-#   transition_reveal(Day)
+  geom_text( aes(y = count+1,label=paste0(location, " (",count,"명)")), size=3, vjust=-1) +
+  transition_reveal(Day)
 ```
 
 
