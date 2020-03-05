@@ -13,6 +13,7 @@ library(tidyverse)
 library(ggplot2)
 library(plotly)
 library(DT)
+library(gganimate)
 
 git_url <- "https://github.com/Unfinishedgod"
 
@@ -49,12 +50,17 @@ commit_info <- data.frame(commit_date,commit_count,fill) %>%
 
 ####
 
-uniform_date <- 200
+uniform_date <- 80
+
+commit_df <- tail(commit_info,uniform_date)
+
+rownames(commit_df) <- NULL
 
 # ggplot
-ggplot_data <-ggplot(data = tail(commit_info,uniform_date), aes(x=commit_date,y=commit_count,fill=level)) +
+ggplot_data <-ggplot(data = commit_df, aes(x=commit_df$commit_date,y=commit_df$commit_count,fill=commit_df$level)) +
   ggtitle(paste0("최근 커밋수: ", uniform_date)) +
-  geom_bar(stat = "identity") +
+  # geom_line(stat = "identity") +
+  geom_col() +
   scale_fill_manual(values = levels(commit_info$fill)) +
   theme_bw() +
   labs(x="Date", y="Commit count")
