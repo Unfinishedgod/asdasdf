@@ -2,28 +2,58 @@
 title: "flexdashboard exam"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
     vertical_layout: fill
-    theme: spacelab
+    social: menu
+    theme: simplex
+    storyboard: true
+    source: embed
 ---
+
+<!-- <style>                      -->
+<!-- .navbar { -->
+<!--   background-color:#003D79; -->
+<!--   border-color:white; -->
+<!-- } -->
+<!-- .navbar-brand { -->
+<!-- color:white!important; -->
+<!-- } -->
+<!-- </style>    -->
+
+<!-- <style type="text/css"> -->
+
+<!-- .chart-title {  /* chart_title  */ -->
+<!--    font-size: 15px -->
+<!-- </style> -->
+
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
 ```
 
-iris
+iris {data-icon="fa-users"}
 =======================================================================
 
-Row {data-height=650}
+Colunms {data-height=650}
 -----------------------------------------------------------------------
 
 ### Chart A
 
 ```{r}
-plot(iris$Sepal.Length)
+library(leaflet)
+leaflet() %>%
+  setView(lng = 127.033, lat = 37.499, zoom = 8) %>% 
+  addTiles() 
+
+# %>%
+  # addMarkers(lng=127.033, lat=37.499, popup="The birthplace of R")
+
+
+# m <- leaflet() %>% setView(lng = -71.0589, lat = 42.3601, zoom = 12)
+# m %>% addTiles()
 ```
 
-Row {data-height=350}
+Colunms {data-height=350}
 -----------------------------------------------------------------------
 
 ### Chart B
@@ -41,7 +71,7 @@ plot(iris$Sepal.Width)
 car
 =======================================================================
 
-Row {data-height=650}
+Colunms {data-height=650}
 -----------------------------------------------------------------------
 
 ### chart AA
@@ -50,7 +80,7 @@ Row {data-height=650}
 plot(cars$speed)
 ```
 
-Row {data-height=350}
+Colunms {data-height=350}
 -----------------------------------------------------------------------
 
 ### chart bb
@@ -62,18 +92,20 @@ plot(cars$dist)
 Reference
 =======================================================================
 
-- theme: http://www.sangerw.com/blog/flexdashboardthemes/#IDreadable
-- Flexdashboard tutorial with R: https://rmarkdown.rstudio.com/flexdashboard/index.html
+1. 참고 자료
+
+- Flexdashboard 튜토리얼: https://rmarkdown.rstudio.com/flexdashboard/index.html
+- 테마: http://www.sangerw.com/blog/flexdashboardthemes/#IDreadable
 - Flexdashboard CRAN: https://cran.r-project.org/web/packages/flexdashboard/flexdashboard.pdf
-- bookdown : https://bookdown.org/yihui/rmarkdown/dashboards.html
-
-## Study
-
+- bookdown in Flexdashboard: https://bookdown.org/yihui/rmarkdown/dashboards.html
 - Making Dashboards in R Markdown: https://arm.rbind.io/slides/flexdashboard.html
 
-- sample1: https://beta.rstudioconnect.com/juliasilge/policeshooting/policeshooting.html
-    - sample1 code: https://gist.github.com/juliasilge/9acbe97c549502bac85404779edceba0
-- sample2: https://jenthompson.me/examples/progressdash.html
-    - sample2 code: https://github.com/jenniferthompson/MOSAICProgress/blob/master/progressdash.Rmd
-- sample3: https://jenthompson.me/examples/insight_progress.html
-    - sample3 code: https://github.com/jenniferthompson/INSIGHTProgress/blob/master/insight_progress.Rmd
+2. 예제 
+
+- 예제 1: https://beta.rstudioconnect.com/juliasilge/policeshooting/policeshooting.html
+    - 예제코드: https://gist.github.com/juliasilge/9acbe97c549502bac85404779edceba0
+- 예제 2: https://jenthompson.me/examples/progressdash.html
+    - 예제코드: https://github.com/jenniferthompson/MOSAICProgress/blob/master/progressdash.Rmd
+- 예제 3: https://jenthompson.me/examples/insight_progress.html
+    - 예제코드: https://github.com/jenniferthompson/INSIGHTProgress/blob/master/insight_progress.Rmd
+- 예제 4: https://tonyelhabr.rbind.io/files/nba-tms.html
