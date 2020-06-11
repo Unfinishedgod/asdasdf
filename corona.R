@@ -17,7 +17,7 @@ library(glue)
 
 theme_set(theme_bw())
 
-## 전체 인구
+## 전체 인구 
 population <- read_xls("population_x.xls")
 
 population <- population[,c(1,8)]
