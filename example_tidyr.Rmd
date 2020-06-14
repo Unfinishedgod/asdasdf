@@ -1,0 +1,41 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library()
+
+a <- c("A","B","C","D","E")
+b <- c(1,2,3,4,5)
+c <- c(5,3,56,7,4)
+d <- c(8,4,3,2,4)
+e <- c(4,3,2,5,2)
+f <- c(6,3,4,63,2)
+g <- c(2,4,6,3,2)
+h <- c(3,7,3,4,5)
+
+df <- data.frame(a,b,c,d,e,f,g,h) 
+
+
+```
+
+# 데이터 형태
+
+```{r}
+df
+```
+
+# gather 사용
+
+```{r}
+colnames(df) <- c("국가","2012","2013","2014","2015","2016","2017","2018")
+
+gather(df, key = "년도", value = "값", `2012`:`2018`)
+```
+
