@@ -1,16 +1,6 @@
-# install.packages("DBI")
-# 
-# > install.packages("odbc")
-# 
-# > install.packages("RPostgreSQL")
-# 
-# # 설치
-# > require("RPostgreSQL")
-# 
-# >con<-dbConnect(dbDriver("PostgreSQL"), dbname="dbname", host="localhost", port=5432, user="user_name",password="password")
-# 
-# > dbListTables(con)
-# 
+# https://dejavuqa.tistory.com/363?category=257816
+# https://github.com/snowplow/snowplow/wiki/Setting-up-PostgreSQL#ec2
+# https://okky.kr/article/629800
 
 library(DBI)
 library(odbc)
