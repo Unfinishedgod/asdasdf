@@ -50,7 +50,7 @@ df_4 <-   if(size != 0) {
   })
 }
 
-# _5. 외교부_국가·지역별 최신안전소식(코로나관련) ----
+# N_5. 외교부_국가·지역별 최신안전소식(코로나관련) ----
 df_5 <- glue("http://apis.data.go.kr/1262000/SafetyNewsList/getCountrySafetyNewsList?serviceKey={service_key}&numOfRows=10&pageNo=1&title1=입국")
 
 
@@ -95,7 +95,6 @@ df_7 <-   if(size != 0) {
   })
 }
 
-
 # _8. 보건복지부_코로나19 연령별·성별감염_현황 ----
 df_8 <- glue("http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19GenAgeCaseInfJson?serviceKey={service_key}&pageNo=1&numOfRows=10&startCreateDt=20200310&endCreateDt=20200414")
 
@@ -131,19 +130,3 @@ df_9 <-   if(size != 0) {
       as_tibble()
   })
 }
-
-fromJSON(df_6)
-
-
-
-
-file_1 <- fromJSON(df_1)
-file_2 <- fromJSON(df_2)
-
-# 1번
-df_1 <- file_1$storeInfos %>% 
-  as_tibble()
-
-# 2번
-df_2 <- file_2$sales %>% 
-  as_tibble()
