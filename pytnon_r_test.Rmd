@@ -1,0 +1,20 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(reticulate)
+```
+
+```{python}
+test_list = ['one', 'two']
+
+for i in test_list:
+  print(i)
+```
+
