@@ -1,0 +1,12 @@
+name: shiny_login
+title: shiny_login
+username:
+account: shjj08
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2760277
+bundleId: 3598048
+url: https://shjj08.shinyapps.io/shiny_login/
+when: 1599373298.01308
+asMultiple: FALSE
+asStatic: FALSE
